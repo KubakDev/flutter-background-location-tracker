@@ -160,6 +160,7 @@ internal class LocationUpdatesService : Service() {
         if (wakeLock?.isHeld == true) {
             wakeLock?.release()
         }
+        FlutterBackgroundManager.destroyEngine()
     }
 
     /**
