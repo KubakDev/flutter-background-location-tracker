@@ -252,7 +252,7 @@ internal class LocationUpdatesService : Service() {
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval).apply {
             setMinUpdateDistanceMeters(distanceFilter)
             setMaxUpdateDelayMillis(interval * 4)
-            setWaitForAccurateLocation(true)
+//          setWaitForAccurateLocation(true)
             setMinUpdateIntervalMillis(interval/2)
         }.build()
 //            .setInterval(interval)
