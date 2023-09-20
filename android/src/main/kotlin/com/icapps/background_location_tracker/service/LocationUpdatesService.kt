@@ -247,18 +247,15 @@ internal class LocationUpdatesService : Service() {
      * Sets the location request parameters.
      */
     private fun createLocationRequest() {
-        val interval = SharedPrefsUtil.trackingInterval(this)
-        val distanceFilter = SharedPrefsUtil.distanceFilter(this)
+        val interval = 4000L;
+        val distanceFilter = 0f;
+        val minInterval = 2000L;
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval).apply {
             setMinUpdateDistanceMeters(distanceFilter)
-            setMaxUpdateDelayMillis(interval * 4)
-//          setWaitForAccurateLocation(true)
-            setMinUpdateIntervalMillis(interval/2)
+            setMaxUpdateDelayMillis(interval)
+            setMinUpdateIntervalMillis(minInterval)
         }.build()
-//            .setInterval(interval)
-//            .setFastestInterval(interval / 2)
-//            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-//            .setSmallestDisplacement(distanceFilter)
+
     }
 
     /**
