@@ -245,7 +245,7 @@ class LocationDao {
 void sendNotification(String text) {
   const settings = InitializationSettings(
     android: AndroidInitializationSettings('app_icon'),
-    iOS: IOSInitializationSettings(
+    iOS: DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
@@ -253,7 +253,10 @@ void sendNotification(String text) {
   );
   FlutterLocalNotificationsPlugin().initialize(
     settings,
-    onSelectNotification: (data) async {
+    onDidReceiveNotificationResponse: (data) async {
+      print('ON CLICK $data'); // ignore: avoid_print
+    },
+    onDidReceiveBackgroundNotificationResponse: (data) async {
       print('ON CLICK $data'); // ignore: avoid_print
     },
   );
@@ -263,7 +266,7 @@ void sendNotification(String text) {
     text,
     const NotificationDetails(
       android: AndroidNotificationDetails('test_notification', 'Test'),
-      iOS: IOSNotificationDetails(),
+      iOS: DarwinNotificationDetails(),
     ),
   );
 }
