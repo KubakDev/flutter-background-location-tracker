@@ -16,6 +16,11 @@ class LocationManager {
         manager.desiredAccuracy = kCLLocationAccuracyBest
         manager.distanceFilter = SharedPrefsUtil.distanceFilter()
         manager.pausesLocationUpdatesAutomatically = false
+        manager.headingFilter = 5.0
+        manager.headingOrientation = .portrait
+        if CLLocationManager.headingAvailable() {
+            manager.startUpdatingHeading()
+        }
         if #available(iOS 11, *) {
             manager.showsBackgroundLocationIndicator = true
         }
@@ -27,5 +32,24 @@ class LocationManager {
     
     class func shared() -> CLLocationManager {
         return sharedLocationManager
+    }
+    
+    class func ensureCorrectPermissions() {
+        let authorizationStatus: CLAuthorizationStatus
+        if #available(iOS 14.0, *) {
+            authorizationStatus = sharedLocationManager.authorizationStatus
+        } else {
+            authorizationStatus = CLLocationManager.authorizationStatus()
+        }
+        
+        if authorizationStatus == .notDetermined {
+            if #available(iOS 14.0, *) {
+                sharedLocationManager.requestWhenInUseAuthorization()
+            } else {
+                sharedLocationManager.requestAlwaysAuthorization()
+            }
+        } else if authorizationStatus == .denied || authorizationStatus == .restricted {
+            CustomLogger.log(message: "Location permissions denied or restricted")
+        }
     }
 }

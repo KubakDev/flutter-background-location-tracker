@@ -37,6 +37,9 @@ extension SwiftBackgroundLocationTrackerPlugin: FlutterPlugin {
         registrar.addMethodCallDelegate(instance, channel: methodChannel)
         registrar.addApplicationDelegate(instance)
         
+        // Ensure correct location permissions
+        LocationManager.ensureCorrectPermissions()
+        
         if (SharedPrefsUtil.isTracking() && SharedPrefsUtil.restartAfterKill()) {
             instance.locationManager.delegate = instance
             instance.locationManager.startUpdatingLocation()
@@ -113,6 +116,31 @@ fileprivate enum BackgroundMethods: String {
 extension SwiftBackgroundLocationTrackerPlugin: CLLocationManagerDelegate {
     private static let BACKGROUND_CHANNEL_NAME = "com.icapps.background_location_tracker/background_channel"
     
+    // iOS 14+ authorization change handler
+    @available(iOS 14.0, *)
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+            if SharedPrefsUtil.isTracking() {
+                CustomLogger.log(message: "Authorization granted, resuming location tracking")
+                manager.startUpdatingLocation()
+            }
+        } else {
+            CustomLogger.log(message: "Location authorization status changed: \(manager.authorizationStatus.rawValue)")
+        }
+    }
+    
+    // Pre-iOS 14 authorization change handler
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            if SharedPrefsUtil.isTracking() {
+                CustomLogger.log(message: "Authorization granted, resuming location tracking")
+                manager.startUpdatingLocation()
+            }
+        } else {
+            CustomLogger.log(message: "Location authorization status changed: \(status.rawValue)")
+        }
+    }
+    
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else {
             CustomLogger.log(message: "No location ...")
@@ -127,7 +155,7 @@ extension SwiftBackgroundLocationTrackerPlugin: CLLocationManagerDelegate {
             "alt": location.altitude,
             "vertical_accuracy": location.verticalAccuracy,
             "horizontal_accuracy": location.horizontalAccuracy,
-            "course": location.course,
+            "course": location.course >= 0 ? location.course : (manager.heading?.trueHeading ?? -1),
             "course_accuracy": -1,
             "speed": location.speed,
             "speed_accuracy": location.speedAccuracy,
@@ -154,6 +182,13 @@ extension SwiftBackgroundLocationTrackerPlugin: CLLocationManagerDelegate {
                 }
                 SwiftBackgroundLocationTrackerPlugin.initBackgroundMethodChannel(flutterEngine: flutterEngine)
             }
+        }
+    }
+    
+    public func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        // Only log if heading accuracy is good (lower values are better)
+        if newHeading.headingAccuracy <= 15 {
+            CustomLogger.log(message: "NEW HEADING: \(String(format: "%.1f", newHeading.trueHeading))")
         }
     }
 }
