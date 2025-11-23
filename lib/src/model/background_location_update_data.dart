@@ -29,6 +29,9 @@ class BackgroundLocationUpdateData {
   /// The accuracy of the speed value, measured in meters per second. Negative value if not available.
   final double speedAccuracy;
 
+  /// Timestamp in milliseconds since epoch
+  final int time;
+
   const BackgroundLocationUpdateData({
     required this.lat,
     required this.lon,
@@ -39,5 +42,6 @@ class BackgroundLocationUpdateData {
     required this.courseAccuracy,
     required this.speed,
     required this.speedAccuracy,
+    required this.time,
   });
 }

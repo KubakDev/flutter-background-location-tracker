@@ -46,7 +46,10 @@ class BackgroundChannel {
         data['course_accuracy'] as double; // ignore: avoid_as
     final speed = data['speed'] as double; // ignore: avoid_as
     final speedAccuracy = data['speed_accuracy'] as double; // ignore: avoid_as
-    await callback(BackgroundLocationUpdateData(
+    final now = DateTime.now();
+    final time = now.millisecondsSinceEpoch; // ignore: avoid_as
+    await callback(
+      BackgroundLocationUpdateData(
         lat: lat,
         lon: lon,
         horizontalAccuracy: horizontalAccuracy,
@@ -55,7 +58,10 @@ class BackgroundChannel {
         course: course,
         courseAccuracy: courseAccuracy,
         speed: speed,
-        speedAccuracy: speedAccuracy));
+        speedAccuracy: speedAccuracy,
+        time: time,
+      ),
+    );
     return true;
   }
 }

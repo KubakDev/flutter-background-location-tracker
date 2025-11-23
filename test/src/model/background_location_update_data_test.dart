@@ -13,6 +13,7 @@ void main() {
       courseAccuracy: 14.3,
       speed: 12.2,
       speedAccuracy: 0.9,
+      time: 0,
     );
     expect(data.lat, 51.45);
     expect(data.lon, 4.5);
@@ -36,6 +37,7 @@ void main() {
       courseAccuracy: 14.3,
       speed: 12.2,
       speedAccuracy: 0.9,
+      time: 0,
     );
     expect(data.lat, 51.45);
     expect(data.lon, 4.5);
