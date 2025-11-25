@@ -247,9 +247,9 @@ internal class LocationUpdatesService : Service() {
      * Sets the location request parameters.
      */
     private fun createLocationRequest() {
-        val interval = 4000L;
-        val distanceFilter = 0f;
-        val minInterval = 2000L;
+        val interval = 10000L;
+        val distanceFilter = 100f;
+        val minInterval = 5000L;
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval).apply {
             setMinUpdateDistanceMeters(distanceFilter)
             setMaxUpdateDelayMillis(interval)

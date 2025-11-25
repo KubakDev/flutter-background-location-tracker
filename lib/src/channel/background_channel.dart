@@ -47,6 +47,7 @@ class BackgroundChannel {
     final speed = data['speed'] as double; // ignore: avoid_as
     final speedAccuracy = data['speed_accuracy'] as double; // ignore: avoid_as
     final now = DateTime.now();
+
     final time = now.millisecondsSinceEpoch; // ignore: avoid_as
     await callback(
       BackgroundLocationUpdateData(
