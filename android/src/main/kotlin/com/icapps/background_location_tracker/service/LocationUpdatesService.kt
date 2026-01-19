@@ -247,15 +247,28 @@ internal class LocationUpdatesService : Service() {
      * Sets the location request parameters.
      */
     private fun createLocationRequest() {
-        val interval = 10000L;
-        val distanceFilter = 100f;
-        val minInterval = 5000L;
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval).apply {
-            setMinUpdateDistanceMeters(distanceFilter)
-            setMaxUpdateDelayMillis(interval)
-            setMinUpdateIntervalMillis(minInterval)
-        }.build()
-
+    // Desired interval: 2 seconds for smooth UI tracking
+    val interval = 2000L;  // 2 seconds
+    
+    // Distance filter: 3 meters for frequent updates when moving
+    val distanceFilter = 3f;  // 3 meters
+    
+    // Minimum interval: 1 second allows responsive tracking
+    val minInterval = 1000L;  // 1 second
+    
+    // Enable batching: 2x interval allows power savings
+    val maxUpdateDelay = interval * 2;  // 4 seconds (enables batching)
+    
+    // Max age: Reject locations older than 5 seconds (important for accuracy)
+    val maxUpdateAge = 5000L;  // 5 seconds
+    
+    locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval).apply {
+        setMinUpdateDistanceMeters(distanceFilter)
+        setMaxUpdateDelayMillis(maxUpdateDelay)
+        setMinUpdateIntervalMillis(minInterval)
+        setWaitForAccurateLocation(true)  // Wait for GPS fixes, not network location
+        setMaxUpdateAgeMillis(maxUpdateAge)  // Filter stale locations
+    }.build()
     }
 
     /**
