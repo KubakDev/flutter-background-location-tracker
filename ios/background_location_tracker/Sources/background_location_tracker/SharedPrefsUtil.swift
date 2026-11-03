@@ -17,7 +17,7 @@ struct SharedPrefsUtil {
     private static let KEY_DISTANCE_FILTER = "background.location.tracker.manager.DISTANCE_FILTER"
     private static let KEY_ACTIVITY_TYPE = "background.location.tracker.manager.KEY_ACTIVITY_TYPE"
     
-    private static let userDefaults = UserDefaults(suiteName: "\(SwiftBackgroundLocationTrackerPlugin.identifier).userDefaults")!
+    private static let userDefaults = UserDefaults(suiteName: "\(BackgroundLocationTrackerPlugin.identifier).userDefaults")!
     
     static func saveCallBackDispatcherHandleKey(callBackHandle: Int64?) {
         store(callBackHandle, key: SharedPrefsUtil.KEY_CALLBACK_HANDLER)
